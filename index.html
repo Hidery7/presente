@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensaje especial para dayi</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <img src="./assets/oso.gif" alt="Osito de peluche" class="main-img">
+        <h2>🥺 Por si alguna vez lo dudas o se te olvida 🥺</h2>
+        <button onclick="entrar()">Entrar</button>
+    </div>
+
+    <div id="animation-container"></div>
+
+    <audio id="background-music" loop>
+        <source src="Coldplay - Yellow (Official Video) - Coldplay.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <script>
+        const audio = document.getElementById('background-music');
+        let audioStarted = false;
+
+        const palabras = [
+            'Te quiero mucho ❤️', 'Te quiero mucho 💕', 'Te quiero mucho 😊',
+            'Te quiero mucho 💖', 'Te quiero mucho 🌟', 'Te quiero mucho 🥰',
+            'Te quiero mucho 💝', 'Te quiero mucho 💘', 'Te quiero mucho 💓',
+            'Te quiero mucho 💞', 'Te quiero mucho 💗', 'Te quiero mucho 💟',
+            'Te quiero mucho 💌', 'Te quiero mucho 💏', 'Te quiero mucho 💑'
+        ];
+
+        function crearPalabra() {
+            const palabra = document.createElement('div');
+            palabra.className = 'palabra-flotante';
+            palabra.textContent = palabras[Math.floor(Math.random() * palabras.length)];
+
+            // Posición inicial en la parte superior de la pantalla
+            palabra.style.left = Math.random() * 90 + 5 + 'vw';
+            palabra.style.top = '0';
+            palabra.style.transform = 'translateY(-100%)';
+
+            // Agregar al contenedor
+            document.getElementById('animation-container').appendChild(palabra);
+
+            // Animación con GSAP
+            gsap.to(palabra, {
+                y: window.innerHeight + 100,
+                duration: Math.random() * 5 + 5,
+                ease: 'none',
+                onComplete: () => {
+                    palabra.remove();
+                }
+            });
+        }
+
+        function iniciarAnimacion() {
+            // Reducir a solo 3 mensajes flotantes a la vez
+            for (let i = 0; i < 3; i++) {
+                // Espaciar más la aparición de los mensajes
+                setTimeout(crearPalabra, i * 1000);
+            }
+
+            // Crear un nuevo mensaje cada 2 segundos
+            setInterval(crearPalabra, 2000);
+        }
+
+        function entrar() {
+            // Ocultar el contenedor inicial
+            document.querySelector('.container').style.display = 'none';
+
+            // Obtener el contenedor de animación
+            const container = document.getElementById('animation-container');
+
+            // Limpiar cualquier contenido previo
+            container.innerHTML = '';
+
+            // Crear contenedor principal del contenido
+            const contenidoPrincipal = document.createElement('div');
+            contenidoPrincipal.className = 'contenido-principal';
+
+            // Crear contenedor del mensaje
+            const mensajeContainer = document.createElement('div');
+            mensajeContainer.className = 'mensaje-container';
+
+            // Contenedor del texto del mensaje
+            const mensaje = document.createElement('p');
+            mensaje.className = 'mensaje-texto';
+
+            // Agregar mensaje al contenedor
+            mensajeContainer.appendChild(mensaje);
+            contenidoPrincipal.appendChild(mensajeContainer);
+            container.appendChild(contenidoPrincipal);
+
+            // Crear contenedor para los botones de navegación
+            const navButtons = document.createElement('div');
+            navButtons.className = 'nav-buttons';
+
+            // Botón izquierdo
+            const btnLeft = document.createElement('button');
+            btnLeft.className = 'nav-btn';
+            btnLeft.innerHTML = '&larr;';
+            btnLeft.onclick = () => cambiarMensaje(-1);
+
+            // Botón derecho
+            const btnRight = document.createElement('button');
+            btnRight.className = 'nav-btn';
+            btnRight.innerHTML = '&rarr;';
+            btnRight.onclick = () => cambiarMensaje(1);
+
+            // Agregar botones al contenedor de navegación
+            navButtons.appendChild(btnLeft);
+            navButtons.appendChild(btnRight);
+
+            // Agregar botones al final del contenedor principal
+            container.appendChild(navButtons);
+
+            // Mostrar el contenedor
+            container.classList.add('visible');
+
+            // Inicializar la animación
+            iniciarAnimacion();
+
+            // Inicializar los mensajes con algunos en dos líneas
+            const mensajes = [
+                'Gracias por darme<br>un poco de tu tiempo 💎',
+                'Siempre podrás contar conmigo,<br>pase lo que pase 🤝',
+                '¡No cambiaría nuestra amistad<br>por nada del mundo! 💕',
+                'Gracias por simplemente<br>existir 💖',
+                'Y gracias por recordar<br>que existo 🌎',
+            ];
+
+            let indiceMensaje = 0;
+
+            // Función para cambiar de mensaje con animación
+            function cambiarMensaje(direccion) {
+                // Desvanecer el mensaje actual
+                mensaje.style.opacity = '0';
+
+                // Cambiar el mensaje después de la transición de opacidad
+                setTimeout(() => {
+                    indiceMensaje = (indiceMensaje + direccion + mensajes.length) % mensajes.length;
+                    mensaje.innerHTML = mensajes[indiceMensaje];
+
+                    // Restaurar la opacidad
+                    setTimeout(() => {
+                        mensaje.style.opacity = '1';
+                    }, 10);
+                }, 200);
+            }
+
+            // Mostrar el primer mensaje
+            mensaje.innerHTML = mensajes[indiceMensaje];
+            mensaje.style.opacity = '1';
+
+            // Iniciar animación de fondo
+            iniciarAnimacion();
+            setInterval(crearPalabra, 500);
+
+            // Reproducir la música de inmediato
+            if (!audioStarted) {
+                audio.currentTime = 0;
+                audio.play().catch(e => console.log("La reproducción automática falló:", e));
+                audioStarted = true;
+            }
+        }
+    </script>
+</body>
+
+</html>
